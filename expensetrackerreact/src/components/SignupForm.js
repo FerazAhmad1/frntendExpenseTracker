@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SignupForm = () => {
+export const SignupForm = ({ buttontype }) => {
   return (
     <div className=" flex items-center justify-center min-h-screen min-w-full max-w-min p-4 border-4 border-yellow-300">
       <form className=" flex flex-col p-10 border-2 border-blue-900 space-y-14">
@@ -25,7 +25,7 @@ export const SignupForm = () => {
           />
         </div>
         <div className="flex justify-center items-center">
-          <button className="text-3xl">Login</button>
+          <button className="text-3xl">{buttontype}</button>
         </div>
       </form>
     </div>
