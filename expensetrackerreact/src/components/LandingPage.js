@@ -3,31 +3,10 @@ import { NavLink } from "react-router-dom";
 import budget from "../Images/Budget.jpeg";
 
 export const LandingPage = () => {
-  const stickyNavref = useRef(null);
-  const [stickyClass, setStickyClass] = useState(true);
-  const stickyNav = (entries, option) => {
-    console.log(entries[0], "entries");
-    if (!entries[0].isIntersecting && entries[0].intersectionRatio !== 1) {
-      setStickyClass("fixed bg-transparent");
-      console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-    } else {
-      // setStickyClass("");
-    }
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(stickyNav, {
-      root: null,
-      threshold: 0,
-    });
-    observer.observe(stickyNavref.current);
-  }, []);
-
   return (
     <>
       <nav
-        ref={stickyNavref}
-        className={` ${stickyClass} box-border  flex-1
+        className={`  box-border  flex-1
        flex  flex-col max-h-fit bg-black md:flex-row md:justify-evenly md:items-center `}>
         <div className=" p-10 text-5xl text-white ">
           <h1 className="uppercase">Daily Expense Tracker</h1>

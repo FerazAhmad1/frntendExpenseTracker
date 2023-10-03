@@ -15,6 +15,15 @@ export const SignupForm = ({ buttontype }) => {
           />
         </div>
         <div className="flex space-x-2 justify-center items-center ">
+          <label className="font-extrabold text-3xl font-serif ">Email</label>
+          <input
+            type="text"
+            className="p-4 text-3xl  outline-none border-2 rounded-3xl"
+            placeholder="example@..."
+          />
+        </div>
+
+        <div className="flex space-x-2 justify-center items-center ">
           <label className="font-extrabold text-3xl font-serif ">
             Password
           </label>
@@ -24,8 +33,8 @@ export const SignupForm = ({ buttontype }) => {
             placeholder="password"
           />
         </div>
-        <div className="flex justify-center items-center">
-          <button className="text-3xl">{buttontype}</button>
+        <div className="flex justify-center p-4 text-3xl outline-none border-2 rounded-3xl bg-blue-800 items-center">
+          <button className="text-3xl text-white ">{buttontype}</button>
         </div>
       </form>
     </div>
