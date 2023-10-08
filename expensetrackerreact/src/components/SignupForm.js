@@ -1,9 +1,13 @@
 import React, { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../feature/Auth/authSlice";
 
 export const SignupForm = ({ buttontype }) => {
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.auth);
   const submitHandler = (e) => {
     e.preventDefault();
     let name = nameRef.current.value ? nameRef.current.value.trim() : "";
@@ -11,7 +15,7 @@ export const SignupForm = ({ buttontype }) => {
     let password = passwordRef.current.value
       ? passwordRef.current.value.trim()
       : "";
-    if (!name) {
+    if (buttontype === "Signup" && !name) {
       alert("please fill your name");
       return;
     }
@@ -23,7 +27,7 @@ export const SignupForm = ({ buttontype }) => {
       alert("please fill your password");
       return;
     }
-    console.log(name, email, password);
+    dispatch(login({ email, token: name }));
   };
 
   return (
