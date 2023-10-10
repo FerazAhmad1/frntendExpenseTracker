@@ -1,20 +1,25 @@
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../feature/Auth/authSlice";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const SignupForm = ({ buttontype }) => {
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const dispatch = useDispatch();
+  const navigator = useNavigate();
   const state = useSelector((state) => state.auth);
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    let name = nameRef.current.value ? nameRef.current.value.trim() : "";
+
+    let name;
     let email = emailRef.current.value ? emailRef.current.value.trim() : "";
     let password = passwordRef.current.value
       ? passwordRef.current.value.trim()
       : "";
+    console.log(name, email, password);
     if (buttontype === "Signup" && !name) {
       alert("please fill your name");
       return;
@@ -27,7 +32,29 @@ export const SignupForm = ({ buttontype }) => {
       alert("please fill your password");
       return;
     }
-    dispatch(login({ email, token: name }));
+    let link;
+    let body;
+    if (buttontype === "Signup") {
+      name = nameRef.current.value ? nameRef.current.value.trim() : "";
+      link = "http://localhost:3002/api/v1/users";
+      body = { name, email, password };
+    } else {
+      link = "http://localhost:3002/api/v1/users/login";
+      body = {
+        email,
+        password,
+      };
+    }
+
+    const response = await axios.post(link, body);
+    if (response.statusText === "OK") {
+      const data = response.data;
+      const { token } = data;
+      console.log(token);
+
+      dispatch(login({ token, email }));
+      navigator("/main", { replace: true });
+    }
   };
 
   return (
@@ -72,7 +99,7 @@ export const SignupForm = ({ buttontype }) => {
           />
         </div>
         <div className="flex justify-center p-4 text-3xl outline-none border-2 rounded-3xl bg-blue-800 items-center">
-          <button className="text-3xl text-white ">{buttontype}</button>
+          <button className=" flex-1 text-3xl text-white ">{buttontype}</button>
         </div>
       </form>
     </div>
