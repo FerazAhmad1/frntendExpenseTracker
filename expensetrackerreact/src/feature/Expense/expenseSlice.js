@@ -12,8 +12,20 @@ const expenseSlice = createSlice({
       state.data.push(action.payload);
       localStorage.setItem("allExpense", JSON.stringify(state.data));
     },
-    updateExpense: (state = initialState, action) => {},
-    deleteExpense: (state = initialState, action) => {},
+    updateExpense: (state = initialState, action) => {
+      state.data = state.data.map((exp) => {
+        if (action.payload.id === exp.id) {
+          return { ...exp, ...action.payload.body };
+        } else return exp;
+      });
+
+      localStorage.setItem("allExpense", JSON.stringify(state.data));
+    },
+    deleteExpense: (state = initialState, action) => {
+      state.data = state.data.filter((exp) => exp.id !== action.payload.id);
+      console.log(action.payload, "ppppppppppppppppppppp");
+      localStorage.setItem("allExpense", JSON.stringify(state.data));
+    },
   },
 });
 

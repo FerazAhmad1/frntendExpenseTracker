@@ -1,16 +1,25 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../feature/Auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ExpenseList } from "./ExpenseList";
-import { createExpense } from "../feature/Expense/expenseSlice";
+import {
+  createExpense,
+  deleteExpense,
+  updateExpense,
+} from "../feature/Expense/expenseSlice";
+import { Buypremium } from "./Buypremium";
 
 export const ExpenseForm = () => {
+  const [created, setCreated] = useState(false);
+  const [id, setEdited] = useState("");
+  const [deleteId, setDeleted] = useState(false);
   const selectCategoryRef = useRef();
   const moneyInputRef = useRef();
   const descriptionInputRef = useRef();
   const dispatch = useDispatch();
+
   const authState = useSelector((state) => state.auth);
   const expenseState = useSelector((state) => state.expense);
 
@@ -37,7 +46,6 @@ export const ExpenseForm = () => {
       alert("Please write description");
       return;
     }
-
     const body = { amount, category, description };
     const { token } = authState;
     const config = {
@@ -47,13 +55,31 @@ export const ExpenseForm = () => {
     };
 
     try {
+      if (id) {
+        const response = await axios.patch(
+          `http://localhost:3002/api/v1/expense/${id}`,
+          body,
+          config
+        );
+
+        if (response.statusText === "OK") {
+          dispatch(updateExpense({ id, body }));
+          setCreated((previousState) => !previousState);
+          return;
+        }
+      }
+    } catch (error) {}
+
+    try {
       const response = await axios.post(
         "http://localhost:3002/api/v1/expense",
         body,
         config
       );
-      const data = response.data;
+      const data = response.data.data;
+      console.log(data);
       dispatch(createExpense(data));
+      setCreated((previousState) => !previousState);
     } catch (error) {
       console.log(error);
     }
@@ -78,13 +104,58 @@ export const ExpenseForm = () => {
           "http://localhost:3002/api/v1/expense",
           config
         );
-        localStorage.setItem("allExpense", JSON.stringify(allExpense));
+        if (allExpense.statusText === "OK") {
+          localStorage.setItem(
+            "allExpense",
+            JSON.stringify(allExpense.data.data)
+          );
+        }
       } catch (error) {
-        console.log(error);
+        console.log(error.response.data);
+        localStorage.clear();
+        navigate("/", { replace: true });
       }
     };
     fetchAllExpense();
-  });
+  }, []);
+  const editHandler = (id) => {
+    let data = JSON.parse(localStorage.getItem("allExpense"));
+    const { amount, description, category } = data.filter(
+      (expense) => expense.id === id
+    )[0];
+    moneyInputRef.current.value = amount;
+    selectCategoryRef.current.value = category;
+    descriptionInputRef.current.value = description;
+    setEdited(id);
+  };
+  const deleteHandler = async (id) => {
+    try {
+      console.log("id", id);
+      const { token } = authState;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.delete(
+        `http://localhost:3002/api/v1/expense/${id}`,
+        config
+      );
+
+      console.log(response);
+      if (response.statusText === "OK") {
+        dispatch(deleteExpense({ id }));
+        setDeleted((previousState) => !previousState);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  let allExpense = [];
+
+  if (localStorage.getItem("allExpense")) {
+    allExpense = JSON.parse(localStorage.getItem("allExpense"));
+  }
 
   return (
     <>
@@ -132,11 +203,19 @@ export const ExpenseForm = () => {
         </div>
 
         <div className=" flex bg-green-600 outline-none  h-14  text-white justify-center items-center w-80 rounded-lg shadow-2xl mb-1 md:text-2xl md:h-16 md:w-{20/100}">
-          <button type="submit">SUBMIT</button>
+          <button type="submit" className="flex-1">
+            SUBMIT
+          </button>
         </div>
       </form>
-      <ExpenseList />
-      <ExpenseList />
+      <Buypremium />
+      {allExpense.map((exp) => (
+        <ExpenseList
+          {...exp}
+          editHandler={editHandler}
+          deleteHandler={deleteHandler}
+        />
+      ))}
     </>
   );
 };

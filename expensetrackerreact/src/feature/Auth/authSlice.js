@@ -28,7 +28,7 @@ const authSlice = createSlice({
       state.email = "";
       state.isLoggedIn = false;
       state.token = "";
-      console.log(state.isLoggedIn);
+      localStorage.clear();
     },
   },
 });

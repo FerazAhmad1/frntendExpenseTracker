@@ -12,48 +12,63 @@ export const SignupForm = ({ buttontype }) => {
   const navigator = useNavigate();
   const state = useSelector((state) => state.auth);
   const submitHandler = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    let name;
-    let email = emailRef.current.value ? emailRef.current.value.trim() : "";
-    let password = passwordRef.current.value
-      ? passwordRef.current.value.trim()
-      : "";
-    console.log(name, email, password);
-    if (buttontype === "Signup" && !name) {
-      alert("please fill your name");
-      return;
-    }
-    if (!email) {
-      alert("please fill your email");
-      return;
-    }
-    if (!password) {
-      alert("please fill your password");
-      return;
-    }
-    let link;
-    let body;
-    if (buttontype === "Signup") {
-      name = nameRef.current.value ? nameRef.current.value.trim() : "";
-      link = "http://localhost:3002/api/v1/users";
-      body = { name, email, password };
-    } else {
-      link = "http://localhost:3002/api/v1/users/login";
-      body = {
-        email,
-        password,
-      };
-    }
+      let name;
+      let email = emailRef.current.value ? emailRef.current.value.trim() : "";
+      let password = passwordRef.current.value
+        ? passwordRef.current.value.trim()
+        : "";
 
-    const response = await axios.post(link, body);
-    if (response.statusText === "OK") {
-      const data = response.data;
-      const { token } = data;
-      console.log(token);
+      emailRef.current.value = "";
+      console.log(name, email, password);
+      if (buttontype === "Signup") {
+        name = nameRef.current.value ? nameRef.current.value.trim() : "";
+        nameRef.current.value = "";
+        if (!name) {
+          alert("please fill your name");
+          return;
+        }
+      }
+      if (!email) {
+        alert("please fill your email");
+        return;
+      }
+      if (!password) {
+        alert("please fill your password");
+        return;
+      }
+      let link;
+      let body;
+      if (buttontype === "Signup") {
+        link = "http://localhost:3002/api/v1/users";
+        body = { name, email, password };
+      } else {
+        link = "http://localhost:3002/api/v1/users/login";
+        body = {
+          email,
+          password,
+        };
+      }
 
-      dispatch(login({ token, email }));
-      navigator("/main", { replace: true });
+      const response = await axios.post(link, body);
+      console.log(response, "rrrrrrrrrrrrrrrrrrrrr");
+      if (response.statusText === "Created") {
+        navigator("/login", { replace: true });
+      }
+      if (response.statusText === "OK") {
+        const data = response.data;
+        const { token } = data;
+        console.log(token);
+
+        dispatch(login({ token, email }));
+        navigator("/main", { replace: true });
+      }
+
+      emailRef.current.value = passwordRef.current.value = "";
+    } catch (error) {
+      console.log(error);
     }
   };
 
