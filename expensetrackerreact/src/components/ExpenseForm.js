@@ -15,6 +15,7 @@ export const ExpenseForm = () => {
   const [created, setCreated] = useState(false);
   const [id, setEdited] = useState("");
   const [deleteId, setDeleted] = useState(false);
+  const [allfetch, setallFetch] = useState([]);
   const selectCategoryRef = useRef();
   const moneyInputRef = useRef();
   const descriptionInputRef = useRef();
@@ -26,6 +27,7 @@ export const ExpenseForm = () => {
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
+    console.log(e);
     e.preventDefault();
     const amount = moneyInputRef.current.value
       ? moneyInputRef.current.value.trim()
@@ -48,6 +50,7 @@ export const ExpenseForm = () => {
     }
     const body = { amount, category, description };
     const { token } = authState;
+
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -61,7 +64,7 @@ export const ExpenseForm = () => {
           body,
           config
         );
-
+        console.log("iddddddddddddddddd");
         if (response.statusText === "OK") {
           dispatch(updateExpense({ id, body }));
           setCreated((previousState) => !previousState);
@@ -76,6 +79,7 @@ export const ExpenseForm = () => {
         body,
         config
       );
+      console.log("xxxxxxxxxxxxxxxxxxxxxx", response);
       const data = response.data.data;
       console.log(data);
       dispatch(createExpense(data));
@@ -109,6 +113,7 @@ export const ExpenseForm = () => {
             "allExpense",
             JSON.stringify(allExpense.data.data)
           );
+          setallFetch(allExpense.data.data);
         }
       } catch (error) {
         console.log(error.response.data);
@@ -199,6 +204,8 @@ export const ExpenseForm = () => {
             <option>Dineer</option>
             <option>Lunch</option>
             <option>Break fast</option>
+            <option>Salary</option>
+            <option>Birth Day Treet</option> <option>Education</option>
           </select>
         </div>
 

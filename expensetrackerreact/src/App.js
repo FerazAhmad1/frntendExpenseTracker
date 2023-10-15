@@ -5,12 +5,21 @@ import { Route, Routes } from "react-router-dom";
 import { LandingPage } from "./components/LandingPage";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { RequireAuth } from "./components/RequireAuth";
+import { Report } from "./components/Report";
 
 export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <LandingPage />
+            </>
+          }
+        />
+        <Route path="/report" element={<Report />} />
         <Route
           path="/main"
           element={
