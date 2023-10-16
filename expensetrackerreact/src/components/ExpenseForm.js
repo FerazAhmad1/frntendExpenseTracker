@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../feature/Auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { ExpenseList } from "./ExpenseList";
 import {
@@ -10,6 +10,7 @@ import {
   updateExpense,
 } from "../feature/Expense/expenseSlice";
 import { Buypremium } from "./Buypremium";
+import { Pagebutton } from "./Pagebutton";
 
 export const ExpenseForm = () => {
   const [created, setCreated] = useState(false);
@@ -20,7 +21,15 @@ export const ExpenseForm = () => {
   const moneyInputRef = useRef();
   const descriptionInputRef = useRef();
   const dispatch = useDispatch();
-
+  const [searchParams, setSearchParams] = useSearchParams({
+    page: 1,
+    limit: 3,
+  });
+  for (const [param, value] of searchParams.entries()) {
+    console.log(`${param}: ${value}`);
+  }
+  const page = searchParams.get("page");
+  const limit = searchParams.get("limit");
   const authState = useSelector((state) => state.auth);
   const expenseState = useSelector((state) => state.expense);
 
@@ -74,8 +83,9 @@ export const ExpenseForm = () => {
     } catch (error) {}
 
     try {
+      console.log(page * 1, limit * 1);
       const response = await axios.post(
-        "http://localhost:3002/api/v1/expense",
+        `http://localhost:3002/api/v1/expense`,
         body,
         config
       );
@@ -105,7 +115,9 @@ export const ExpenseForm = () => {
           },
         };
         const allExpense = await axios.get(
-          "http://localhost:3002/api/v1/expense",
+          `http://localhost:3002/api/v1/expense?page=${page * 1}&limit=${
+            limit * 1
+          }`,
           config
         );
         if (allExpense.statusText === "OK") {
@@ -113,6 +125,11 @@ export const ExpenseForm = () => {
             "allExpense",
             JSON.stringify(allExpense.data.data)
           );
+          localStorage.setItem(
+            "totalPages",
+            JSON.stringify(allExpense.data.totalPages)
+          );
+          console.log(allExpense.data);
           setallFetch(allExpense.data.data);
         }
       } catch (error) {
@@ -122,7 +139,7 @@ export const ExpenseForm = () => {
       }
     };
     fetchAllExpense();
-  }, []);
+  }, [searchParams]);
   const editHandler = (id) => {
     let data = JSON.parse(localStorage.getItem("allExpense"));
     const { amount, description, category } = data.filter(
@@ -172,6 +189,7 @@ export const ExpenseForm = () => {
           LOGOUT
         </button>
       </div>
+      {console.log("i am running")}
       <form
         onSubmit={submitHandler}
         className="flex flex-col md:flex-row md:flex-wrap md:justify-between md:items-center md:p-4 md:bg-blue-700 md:min-w-max gap-2 mt-2 justify-center items-center">
@@ -223,6 +241,7 @@ export const ExpenseForm = () => {
           deleteHandler={deleteHandler}
         />
       ))}
+      <Pagebutton />
     </>
   );
 };

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   data: JSON.parse(localStorage.getItem("allExpense")) || [],
+  totalPages: JSON.parse(localStorage.getItem("totalPages")) || 1,
 };
 
 const expenseSlice = createSlice({
