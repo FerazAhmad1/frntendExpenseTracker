@@ -70,7 +70,7 @@ export const ExpenseForm = () => {
     try {
       if (id) {
         const response = await axios.patch(
-          `http://localhost:3002/api/v1/expense/${id}`,
+          `https://apiexpensetracker.onrender.com/api/v1/expense/${id}`,
           body,
           config
         );
@@ -86,7 +86,7 @@ export const ExpenseForm = () => {
     try {
       console.log(page * 1, limit * 1);
       const response = await axios.post(
-        `http://localhost:3002/api/v1/expense`,
+        `https://apiexpensetracker.onrender.com/api/v1/expense`,
         body,
         config
       );

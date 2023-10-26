@@ -42,10 +42,10 @@ export const SignupForm = ({ buttontype }) => {
       let link;
       let body;
       if (buttontype === "Signup") {
-        link = "http://localhost:3002/api/v1/users";
+        link = "https://apiexpensetracker.onrender.com/api/v1/users";
         body = { name, email, password };
       } else {
-        link = "http://localhost:3002/api/v1/users/login";
+        link = "https://apiexpensetracker.onrender.com/api/v1/users/login";
         body = {
           email,
           password,
@@ -56,8 +56,9 @@ export const SignupForm = ({ buttontype }) => {
       console.log(response, "rrrrrrrrrrrrrrrrrrrrr", response.status);
       if (response.status === 201) {
         navigator("/login", { replace: true });
+        return;
       }
-      if (response.statusText === "OK") {
+      if (response.status === 200) {
         const data = response.data;
         const { token } = data;
         console.log(token);

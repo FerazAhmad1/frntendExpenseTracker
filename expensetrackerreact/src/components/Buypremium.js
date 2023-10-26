@@ -6,7 +6,7 @@ export const Buypremium = () => {
   const [Razorpay, isLoaded] = useRazorpay();
   const payHandler = async () => {
     const order = await axios.get(
-      "http://localhost:3002/api/v1/users/create-order"
+      "https://apiexpensetracker.onrender.com/api/v1/users/create-order"
     );
     const { amount, id } = order.data.data;
 
