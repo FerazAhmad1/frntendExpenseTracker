@@ -8,6 +8,7 @@ import {
   createExpense,
   deleteExpense,
   updateExpense,
+  setData,
 } from "../feature/Expense/expenseSlice";
 import { Buypremium } from "./Buypremium";
 import { Pagebutton } from "./Pagebutton";
@@ -23,7 +24,7 @@ export const ExpenseForm = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams({
     page: 1,
-    limit: 3,
+    limit: 5,
   });
   for (const [param, value] of searchParams.entries()) {
     console.log(`${param}: ${value}`);
@@ -121,15 +122,12 @@ export const ExpenseForm = () => {
           config
         );
         if (allExpense.statusText === "OK") {
-          localStorage.setItem(
-            "allExpense",
-            JSON.stringify(allExpense.data.data)
-          );
-          localStorage.setItem(
-            "totalPages",
-            JSON.stringify(allExpense.data.totalPages)
-          );
+          const data = allExpense.data.data;
+          localStorage.setItem("allExpense", JSON.stringify(data));
+          const totalPages = allExpense.data.totalPages;
+          localStorage.setItem("totalPages", JSON.stringify(totalPages));
           console.log(allExpense.data);
+          dispatch(setData({ data, totalPages }));
           setallFetch(allExpense.data.data);
         }
       } catch (error) {
@@ -139,7 +137,7 @@ export const ExpenseForm = () => {
       }
     };
     fetchAllExpense();
-  }, [searchParams]);
+  }, [searchParams, created]);
   const editHandler = (id) => {
     let data = JSON.parse(localStorage.getItem("allExpense"));
     const { amount, description, category } = data.filter(

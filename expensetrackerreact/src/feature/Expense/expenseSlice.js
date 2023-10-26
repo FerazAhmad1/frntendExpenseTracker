@@ -9,6 +9,10 @@ const expenseSlice = createSlice({
   name: "expenses",
   initialState,
   reducers: {
+    setData: (state = initialState, action) => {
+      state.data = action.payload.data;
+      state.totalPages = action.payload.totalPages;
+    },
     createExpense: (state = initialState, action) => {
       state.data.push(action.payload);
       localStorage.setItem("allExpense", JSON.stringify(state.data));
@@ -31,5 +35,5 @@ const expenseSlice = createSlice({
 });
 
 export default expenseSlice.reducer;
-export const { createExpense, updateExpense, deleteExpense } =
+export const { createExpense, updateExpense, deleteExpense, setData } =
   expenseSlice.actions;

@@ -53,8 +53,8 @@ export const SignupForm = ({ buttontype }) => {
       }
 
       const response = await axios.post(link, body);
-      console.log(response, "rrrrrrrrrrrrrrrrrrrrr");
-      if (response.statusText === "Created") {
+      console.log(response, "rrrrrrrrrrrrrrrrrrrrr", response.status);
+      if (response.status === 201) {
         navigator("/login", { replace: true });
       }
       if (response.statusText === "OK") {
